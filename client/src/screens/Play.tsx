@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
 import type { Game } from '../useGame'
-import { ROUND_RULES } from '@shared/types'
 import { Button, Screen, TeamPill } from '../components/ui'
 import { useCountdown } from '../useCountdown'
+import { useT } from '../i18n'
 
 export function Play({ game }: { game: Game }) {
+  const t = useT()
   const { state, currentName } = game
   const secondsLeft = useCountdown(state?.turnEndsAt ?? null)
 
@@ -29,7 +30,8 @@ export function Play({ game }: { game: Game }) {
   }, [game.isActive])
 
   if (!state) return null
-  const rules = ROUND_RULES[state.round]
+  const roundTitle = t(`round.${state.round}.title`)
+  const roundRule = t(`round.${state.round}.rule`)
   const activePlayer = state.players.find((p) => p.id === state.activePlayerId)
   const low = secondsLeft <= 10
 
@@ -48,26 +50,26 @@ export function Play({ game }: { game: Game }) {
           <div className={`text-2xl font-black tabular-nums ${low ? 'text-rose-400' : ''}`}>
             {secondsLeft}s
           </div>
-          <span className="text-slate-400 text-sm">{state.bowlCount} left</span>
+          <span className="text-slate-400 text-sm">{t('play.left', { count: state.bowlCount })}</span>
         </div>
 
         <div className="flex-1 flex flex-col items-center justify-center text-center w-full">
           <p className="text-indigo-400 text-sm font-semibold uppercase tracking-wide">
-            {rules.title}
+            {roundTitle}
           </p>
-          <p className="text-slate-400 text-sm mb-6">{rules.rule}</p>
+          <p className="text-slate-400 text-sm mb-6">{roundRule}</p>
           <div className="rounded-3xl bg-white text-slate-900 px-6 py-12 w-full shadow-2xl">
-            <p className="text-xs uppercase tracking-widest text-slate-400 mb-2">Your word</p>
+            <p className="text-xs uppercase tracking-widest text-slate-400 mb-2">
+              {t('play.yourWord')}
+            </p>
             <p className="text-4xl font-black break-words">{currentName ?? '…'}</p>
           </div>
         </div>
 
         <Button onClick={game.guessCorrect} disabled={!currentName} className="!py-6 !text-2xl">
-          ✓ Got it!
+          {t('play.gotIt')}
         </Button>
-        <p className="text-center text-xs text-slate-500 mt-2">
-          No skipping — keep going until they guess it.
-        </p>
+        <p className="text-center text-xs text-slate-500 mt-2">{t('play.noSkip')}</p>
       </Screen>
     )
   }
@@ -77,11 +79,13 @@ export function Play({ game }: { game: Game }) {
     <Screen>
       <div className="flex-1 flex flex-col items-center justify-center text-center w-full">
         <TeamPill team={state.activeTeam} />
-        <p className="text-2xl font-bold mt-4">{activePlayer?.name} is giving clues</p>
-        <p className="text-indigo-400 mt-1">{rules.title}</p>
+        <p className="text-2xl font-bold mt-4">
+          {t('play.givingClues', { name: activePlayer?.name ?? '' })}
+        </p>
+        <p className="text-indigo-400 mt-1">{roundTitle}</p>
         <div className="my-8">{Timer}</div>
-        <p className="text-slate-300 max-w-xs">{rules.rule}</p>
-        <p className="text-slate-500 text-sm mt-6">{state.bowlCount} names left</p>
+        <p className="text-slate-300 max-w-xs">{roundRule}</p>
+        <p className="text-slate-500 text-sm mt-6">{t('play.namesLeft', { count: state.bowlCount })}</p>
       </div>
     </Screen>
   )

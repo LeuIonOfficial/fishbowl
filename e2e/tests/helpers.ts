@@ -12,6 +12,15 @@ export class Player {
 
   static async create(browser: Browser, name: string): Promise<Player> {
     const context = await browser.newContext()
+    // Force English so assertions are stable regardless of the deployment's
+    // default language (production defaults to Romanian).
+    await context.addInitScript(() => {
+      try {
+        window.localStorage.setItem('fishbowl.lang', 'en')
+      } catch {
+        /* ignore */
+      }
+    })
     const page = await context.newPage()
     return new Player(name, context, page)
   }

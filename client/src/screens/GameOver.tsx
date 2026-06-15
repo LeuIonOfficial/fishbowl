@@ -1,15 +1,15 @@
 import type { Game } from '../useGame'
 import { Button, Screen } from '../components/ui'
 import { Scoreboard } from '../components/Scoreboard'
+import { useT } from '../i18n'
 
 export function GameOver({ game }: { game: Game }) {
+  const t = useT()
   const { state } = game
   if (!state) return null
 
   const title =
-    state.winner === 'tie'
-      ? "It's a tie!"
-      : `Team ${state.winner} wins! 🏆`
+    state.winner === 'tie' ? t('over.tie') : t('over.win', { team: state.winner ?? '' })
 
   return (
     <Screen>
@@ -22,12 +22,12 @@ export function GameOver({ game }: { game: Game }) {
       <div className="flex-1" />
       <div className="w-full space-y-2">
         {game.isHost ? (
-          <Button onClick={game.playAgain}>Play again</Button>
+          <Button onClick={game.playAgain}>{t('over.playAgain')}</Button>
         ) : (
-          <p className="text-center text-slate-400">Waiting for the host to restart…</p>
+          <p className="text-center text-slate-400">{t('over.waitingRestart')}</p>
         )}
         <Button variant="ghost" className="!py-2 !text-sm" onClick={game.leaveRoom}>
-          Leave
+          {t('common.leave')}
         </Button>
       </div>
     </Screen>

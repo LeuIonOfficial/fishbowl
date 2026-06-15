@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
+import { useT } from '../i18n'
 
 export function Screen({ children }: { children: ReactNode }) {
   return (
@@ -24,10 +25,11 @@ export function Button({ variant = 'primary', className = '', ...props }: BtnPro
 }
 
 export function TeamPill({ team }: { team: 'A' | 'B' }) {
+  const t = useT()
   const cls = team === 'A' ? 'bg-sky-500/20 text-sky-300' : 'bg-amber-500/20 text-amber-300'
   return (
     <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${cls}`}>
-      Team {team}
+      {t('common.team', { team })}
     </span>
   )
 }

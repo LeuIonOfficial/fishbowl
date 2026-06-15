@@ -2,8 +2,10 @@ import { useState } from 'react'
 import type { Game } from '../useGame'
 import { NAMES_PER_PLAYER } from '@shared/types'
 import { Button, Screen } from '../components/ui'
+import { useT } from '../i18n'
 
 export function Submit({ game }: { game: Game }) {
+  const t = useT()
   const { state } = game
   const me = game.me()
   const [names, setNames] = useState<string[]>(Array(NAMES_PER_PLAYER).fill(''))
@@ -26,19 +28,19 @@ export function Submit({ game }: { game: Game }) {
         <div className="flex-1" />
         <div className="text-center">
           <div className="text-6xl mb-4">✅</div>
-          <h2 className="text-2xl font-bold">You're in the bowl!</h2>
+          <h2 className="text-2xl font-bold">{t('submit.done')}</h2>
           <p className="text-slate-400 mt-2">
-            {submitted} / {teamed.length} players ready
+            {t('submit.ready', { submitted, total: teamed.length })}
           </p>
         </div>
         <div className="flex-1" />
         <div className="w-full">
           {game.isHost ? (
             <Button disabled={!allReady} onClick={game.startGame}>
-              {allReady ? 'Start the game' : 'Waiting for everyone…'}
+              {allReady ? t('submit.start') : t('submit.waitingEveryone')}
             </Button>
           ) : (
-            <p className="text-center text-slate-400">Waiting for the host to start…</p>
+            <p className="text-center text-slate-400">{t('lobby.waitingHost')}</p>
           )}
         </div>
       </Screen>
@@ -48,10 +50,8 @@ export function Submit({ game }: { game: Game }) {
   return (
     <Screen>
       <div className="w-full text-center mb-4">
-        <h2 className="text-2xl font-bold">Add {NAMES_PER_PLAYER} names</h2>
-        <p className="text-slate-400 text-sm mt-1">
-          People, characters, celebrities — keep them secret!
-        </p>
+        <h2 className="text-2xl font-bold">{t('submit.title', { n: NAMES_PER_PLAYER })}</h2>
+        <p className="text-slate-400 text-sm mt-1">{t('submit.subtitle')}</p>
       </div>
       <div className="w-full space-y-2">
         {names.map((n, i) => (
@@ -64,7 +64,7 @@ export function Submit({ game }: { game: Game }) {
                 next[i] = e.target.value
                 setNames(next)
               }}
-              placeholder="e.g. Cleopatra"
+              placeholder={t('submit.placeholder')}
               className="flex-1 rounded-xl bg-slate-800 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
@@ -73,7 +73,9 @@ export function Submit({ game }: { game: Game }) {
       <div className="flex-1" />
       <div className="w-full mt-6">
         <Button disabled={filled !== NAMES_PER_PLAYER} onClick={submit}>
-          {filled === NAMES_PER_PLAYER ? 'Submit names' : `${filled}/${NAMES_PER_PLAYER} filled`}
+          {filled === NAMES_PER_PLAYER
+            ? t('submit.submit')
+            : t('submit.filled', { filled, n: NAMES_PER_PLAYER })}
         </Button>
       </div>
     </Screen>
