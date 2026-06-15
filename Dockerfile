@@ -5,6 +5,8 @@ COPY client/package*.json client/
 COPY shared/ shared/
 RUN npm --prefix client ci
 COPY client/ client/
+ARG VITE_UMAMI_WEBSITE_ID
+ENV VITE_UMAMI_WEBSITE_ID=$VITE_UMAMI_WEBSITE_ID
 RUN npm --prefix client run build
 
 # ---- Stage 2: runtime (server serves API + built client) ----

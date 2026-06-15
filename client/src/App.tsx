@@ -1,4 +1,5 @@
 import { useGame } from './useGame'
+import { useAnalytics } from './useAnalytics'
 import { Home } from './screens/Home'
 import { Lobby } from './screens/Lobby'
 import { Submit } from './screens/Submit'
@@ -10,6 +11,7 @@ import { LanguageSwitcher } from './components/LanguageSwitcher'
 export default function App() {
   const game = useGame()
   const { state, error } = game
+  useAnalytics(state)
 
   return (
     <>

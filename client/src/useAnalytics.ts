@@ -1,0 +1,40 @@
+import { useEffect, useRef } from 'react'
+import type { PublicState } from '@shared/types'
+import { trackEvent } from './analytics'
+
+export function useAnalytics(state: PublicState | null): void {
+  const prevPhaseRef = useRef<string | null>(null)
+  const joinedRef = useRef(false)
+
+  useEffect(() => {
+    if (!state) {
+      prevPhaseRef.current = null
+      joinedRef.current = false
+      return
+    }
+
+    if (!joinedRef.current) {
+      joinedRef.current = true
+      trackEvent('room_joined')
+    }
+
+    const prev = prevPhaseRef.current
+    const { phase, round } = state
+
+    if (prev !== null && prev !== phase) {
+      if (phase === 'round_intro' && round === 1) {
+        trackEvent('game_started', { players: state.players.length })
+      } else if (phase === 'round_intro' && round > 1) {
+        trackEvent('round_started', { round })
+      } else if (phase === 'game_over') {
+        trackEvent('game_completed', {
+          winner: state.winner,
+          scoreA: state.scores.A,
+          scoreB: state.scores.B,
+        })
+      }
+    }
+
+    prevPhaseRef.current = phase
+  }, [state])
+}

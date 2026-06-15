@@ -39,6 +39,12 @@ jobs:
             "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
             'cd /root/fishbowl && docker compose up -d --build && docker image prune -f'
 
+      - name: Start analytics stack
+        run: |
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes \
+            "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
+            'cd /root/fishbowl/analytics && [ -f .env ] && docker compose --project-name umami up -d || echo "Umami .env not found — skipping analytics stack"'
+
       - name: Smoke check
         run: |
           sleep 5
