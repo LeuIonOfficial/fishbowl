@@ -18,6 +18,6 @@ sleep 5
 docker compose ps
 
 echo
-echo "Done. App should be reachable at: http://$(hostname -I 2>/dev/null | awk '{print $1}')/"
+echo "Done. App should be reachable at: http://$(hostname -I 2>/dev/null | awk '{print $1}'):8080/"
 echo "Logs:    docker compose logs -f app"
 echo "Stop:    docker compose down"

@@ -1,0 +1,36 @@
+name: E2E (live site)
+
+# Plays a full 4-player game against the deployed site to confirm production works.
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: 'URL to test'
+        default: 'https://game.ionleu.com'
+        required: true
+  schedule:
+    - cron: '0 7 * * *' # daily smoke test
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install e2e deps
+        run: npm --prefix e2e install
+      - name: Install Playwright browser
+        run: npm --prefix e2e exec playwright install --with-deps chromium
+      - name: Play a full game against the live site
+        env:
+          BASE_URL: ${{ github.event.inputs.base_url || 'https://game.ionleu.com' }}
+        run: npm --prefix e2e test
+      - name: Upload report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-live
+          path: e2e/playwright-report/
+          retention-days: 7

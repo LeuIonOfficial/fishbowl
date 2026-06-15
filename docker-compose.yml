@@ -15,9 +15,9 @@ services:
   app:
     build: .
     restart: unless-stopped
-    # Publish on port 80 so players just hit http://<vps-ip>
+    # Bound to localhost only — reached via the host nginx reverse proxy (TLS).
     ports:
-      - '80:3001'
+      - '127.0.0.1:8080:3001'
     environment:
       - PORT=3001
       - REDIS_URL=redis://redis:6379

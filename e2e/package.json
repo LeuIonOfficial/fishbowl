@@ -3,7 +3,11 @@
   "private": true,
   "scripts": {
     "test": "playwright test",
-    "test:headed": "playwright test --headed"
+    "test:headed": "playwright test --headed",
+    "test:live": "BASE_URL=https://game.ionleu.com playwright test",
+    "ui": "playwright test --ui",
+    "ui:live": "BASE_URL=https://game.ionleu.com playwright test --ui",
+    "watch:live": "BASE_URL=https://game.ionleu.com SLOWMO=350 playwright test --headed"
   },
   "devDependencies": {
     "@playwright/test": "^1.47.0"
