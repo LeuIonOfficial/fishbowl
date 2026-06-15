@@ -29,7 +29,11 @@ export function Lobby({ game }: { game: Game }) {
     <Screen>
       <div className="w-full text-center mb-4">
         <p className="text-slate-400 text-sm">Room code</p>
-        <button onClick={share} className="text-5xl font-black tracking-[0.2em] active:scale-95 transition">
+        <button
+          onClick={share}
+          data-testid="room-code"
+          className="text-5xl font-black tracking-[0.2em] active:scale-95 transition"
+        >
           {state.roomId}
         </button>
         <p className="text-xs text-slate-500 mt-1">Tap the code to share the join link</p>

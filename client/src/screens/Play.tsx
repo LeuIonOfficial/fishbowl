@@ -82,9 +82,6 @@ export function Play({ game }: { game: Game }) {
         <div className="my-8">{Timer}</div>
         <p className="text-slate-300 max-w-xs">{rules.rule}</p>
         <p className="text-slate-500 text-sm mt-6">{state.bowlCount} names left</p>
-        {state.lastGuessed && (
-          <p className="text-emerald-400 text-sm mt-2">Last guessed: {state.lastGuessed}</p>
-        )}
       </div>
     </Screen>
   )

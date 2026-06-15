@@ -43,6 +43,26 @@ shares the 4-letter code (or the join link), everyone else joins, picks a team, 
    - The timer is sent once as a timestamp; each phone counts down locally (no per-second traffic).
 4. **Game over** — highest score after 3 rounds wins. Host can play again.
 
+## Testing
+
+```bash
+npm --prefix server test    # 27 server e2e tests (real socket clients vs. the state machine)
+npm --prefix client test    # 24 UI component tests (Vitest + React Testing Library)
+npm --prefix e2e test        # real-browser tests: 4 Chromium contexts play a full game
+```
+
+The Playwright suite boots the actual server + client and drives four isolated browser
+contexts (one per player) through a complete 3-round game by clicking real buttons. It also
+asserts the privacy guarantee in a live browser: the current word is visible to the clue-giver
+and never appears on any teammate's or opponent's screen.
+
+First-time setup for the browser tests:
+
+```bash
+npm --prefix e2e install
+npm --prefix e2e exec playwright install chromium
+```
+
 ## Project layout
 
 ```
