@@ -4,18 +4,13 @@ import { trackEvent } from './analytics'
 
 export function useAnalytics(state: PublicState | null): void {
   const prevPhaseRef = useRef<string | null>(null)
-  const joinedRef = useRef(false)
+  const prevLastGuessedRef = useRef<string | null>(null)
 
   useEffect(() => {
     if (!state) {
       prevPhaseRef.current = null
-      joinedRef.current = false
+      prevLastGuessedRef.current = null
       return
-    }
-
-    if (!joinedRef.current) {
-      joinedRef.current = true
-      trackEvent('room_joined')
     }
 
     const prev = prevPhaseRef.current
@@ -35,6 +30,15 @@ export function useAnalytics(state: PublicState | null): void {
       }
     }
 
+    if (
+      state.lastGuessed &&
+      state.lastGuessed !== prevLastGuessedRef.current &&
+      phase === 'playing'
+    ) {
+      trackEvent('name_guessed', { round })
+    }
+
     prevPhaseRef.current = phase
+    prevLastGuessedRef.current = state.lastGuessed
   }, [state])
 }

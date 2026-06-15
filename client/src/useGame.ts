@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { PublicState, TeamId } from '@shared/types'
 import { socket, getPlayerId } from './game'
+import { trackEvent } from './analytics'
 
 const ROOM_KEY = 'fishbowl.roomId'
 
@@ -81,6 +82,7 @@ export function useGame(): Game {
     (name?: string) => {
       socket.emit('create_room', { playerId, name }, (res) => {
         if (!res.ok) setError(res.error)
+        else trackEvent('room_created')
       })
     },
     [playerId]
@@ -90,6 +92,7 @@ export function useGame(): Game {
     (roomId: string, name?: string) => {
       socket.emit('join_room', { roomId: roomId.toUpperCase(), playerId, name }, (res) => {
         if (!res.ok) setError(res.error)
+        else trackEvent('room_joined')
       })
     },
     [playerId]
