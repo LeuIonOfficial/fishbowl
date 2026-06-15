@@ -30,7 +30,7 @@ jobs:
             -e "ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes" \
             --exclude '.git' --exclude 'node_modules' --exclude 'dist' \
             --exclude 'test-results' --exclude 'playwright-report' \
-            --exclude '*.tsbuildinfo' \
+            --exclude '*.tsbuildinfo' --exclude '.env' \
             ./ "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/root/fishbowl/"
 
       - name: Rebuild and restart
