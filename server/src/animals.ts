@@ -1,15 +1,15 @@
 // Auto-generated anonymous identities, à la Google Docs ("Anonymous Aardvark").
 
 const ADJECTIVES = [
-  'Sneaky', 'Brave', 'Jolly', 'Witty', 'Calm', 'Mighty', 'Swift', 'Clever',
-  'Fuzzy', 'Wild', 'Lucky', 'Bold', 'Quiet', 'Sunny', 'Grumpy', 'Dizzy',
-  'Cosmic', 'Royal', 'Spicy', 'Gentle',
+  'Șiret', 'Curajos', 'Vesel', 'Isteț', 'Calm', 'Puternic', 'Rapid', 'Deștept',
+  'Pufos', 'Sălbatic', 'Norocos', 'Îndrăzneț', 'Liniștit', 'Însorit', 'Morocănos', 'Amețit',
+  'Cosmic', 'Regal', 'Picant', 'Blând',
 ]
 
 const ANIMALS = [
-  'Otter', 'Falcon', 'Panda', 'Lynx', 'Gecko', 'Walrus', 'Badger', 'Heron',
-  'Koala', 'Moose', 'Raven', 'Tapir', 'Ferret', 'Llama', 'Narwhal', 'Quokka',
-  'Puffin', 'Bison', 'Mantis', 'Octopus',
+  'Vidră', 'Uliu', 'Panda', 'Linx', 'Gecko', 'Morsă', 'Bursuc', 'Stârc',
+  'Koala', 'Elan', 'Corb', 'Tapir', 'Dihor', 'Lamă', 'Narval', 'Arici',
+  'Pinguin', 'Zimbru', 'Mantis', 'Caracatiță',
 ]
 
 export const COLORS = [
