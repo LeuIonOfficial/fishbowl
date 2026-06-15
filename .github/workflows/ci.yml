@@ -30,5 +30,8 @@ jobs:
       - name: Run server tests
         run: npm --prefix server test
 
+      - name: Run client tests
+        run: npm --prefix client test
+
       - name: Build client
         run: npm --prefix client run build

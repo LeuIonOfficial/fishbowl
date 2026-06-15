@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
@@ -11,5 +12,10 @@ export default defineConfig({
     host: true, // expose on LAN so phones can connect
     port: 5173,
     fs: { allow: ['..'] }, // allow importing ../shared
+  },
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: './src/test/setup.ts',
   },
 })
