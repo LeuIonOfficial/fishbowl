@@ -49,11 +49,11 @@ export interface PublicState {
 // ---- Client -> Server events ----
 export interface ClientToServer {
   create_room: (
-    p: { playerId: string; name?: string; lang?: string },
+    p: { playerId: string; name?: string },
     cb: (res: { ok: true; roomId: string } | { ok: false; error: string }) => void
   ) => void
   join_room: (
-    p: { roomId: string; playerId: string; name?: string; lang?: string },
+    p: { roomId: string; playerId: string; name?: string },
     cb: (res: { ok: true; roomId: string } | { ok: false; error: string }) => void
   ) => void
   rename: (p: { name: string }) => void

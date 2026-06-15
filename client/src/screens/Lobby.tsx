@@ -3,10 +3,11 @@ import type { Game } from '../useGame'
 import type { TeamId } from '@shared/types'
 import { MIN_PLAYERS } from '@shared/types'
 import { Avatar, Button, Screen } from '../components/ui'
-import { useT } from '../i18n'
+import { useI18n } from '../i18n'
+import { translateAnimalName } from '../animals'
 
 export function Lobby({ game }: { game: Game }) {
-  const t = useT()
+  const { t, lang } = useI18n()
   const { state } = game
   const me = game.me()
   const [editing, setEditing] = useState(false)
@@ -43,7 +44,7 @@ export function Lobby({ game }: { game: Game }) {
 
       {/* Identity */}
       <div className="w-full rounded-2xl bg-slate-800/60 p-3 mb-4 flex items-center gap-3">
-        {me && <Avatar name={me.name} color={me.color} />}
+        {me && <Avatar name={translateAnimalName(me.name, lang)} color={me.color} />}
         {editing ? (
           <input
             autoFocus
@@ -58,7 +59,8 @@ export function Lobby({ game }: { game: Game }) {
           />
         ) : (
           <button className="flex-1 text-left text-lg font-semibold" onClick={() => setEditing(true)}>
-            {me?.name} <span className="text-slate-500 text-sm">{t('lobby.renameHint')}</span>
+            {me ? translateAnimalName(me.name, lang) : ''}{' '}
+            <span className="text-slate-500 text-sm">{t('lobby.renameHint')}</span>
           </button>
         )}
       </div>
@@ -74,8 +76,8 @@ export function Lobby({ game }: { game: Game }) {
               <ul className="space-y-2 min-h-[3rem]">
                 {teams[team].map((p) => (
                   <li key={p.id} className="flex items-center gap-2 text-sm">
-                    <Avatar name={p.name} color={p.color} />
-                    <span className={p.connected ? '' : 'opacity-40'}>{p.name}</span>
+                    <Avatar name={translateAnimalName(p.name, lang)} color={p.color} />
+                    <span className={p.connected ? '' : 'opacity-40'}>{translateAnimalName(p.name, lang)}</span>
                   </li>
                 ))}
               </ul>
@@ -94,7 +96,7 @@ export function Lobby({ game }: { game: Game }) {
 
       {unassigned.length > 0 && (
         <p className="text-slate-500 text-sm mt-3">
-          {t('lobby.waitingTeam', { names: unassigned.map((p) => p.name).join(', ') })}
+          {t('lobby.waitingTeam', { names: unassigned.map((p) => translateAnimalName(p.name, lang)).join(', ') })}
         </p>
       )}
 

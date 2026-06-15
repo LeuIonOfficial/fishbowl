@@ -93,11 +93,11 @@ export function resetRooms(): void {
   rooms.clear()
 }
 
-export function addPlayer(room: Room, playerId: string, name?: string, lang?: string): Player {
+export function addPlayer(room: Room, playerId: string, name?: string): Player {
   const taken = new Set([...room.players.values()].map((p) => p.name))
   const player: Player = {
     id: playerId,
-    name: name?.trim() || generateAnimalName(taken, lang),
+    name: name?.trim() || generateAnimalName(taken),
     color: pickColor(room.players.size),
     teamId: null,
     connected: true,

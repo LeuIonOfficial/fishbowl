@@ -2,10 +2,11 @@ import { useEffect } from 'react'
 import type { Game } from '../useGame'
 import { Button, Screen, TeamPill } from '../components/ui'
 import { useCountdown } from '../useCountdown'
-import { useT } from '../i18n'
+import { useI18n } from '../i18n'
+import { translateAnimalName } from '../animals'
 
 export function Play({ game }: { game: Game }) {
-  const t = useT()
+  const { t, lang } = useI18n()
   const { state, currentName } = game
   const secondsLeft = useCountdown(state?.turnEndsAt ?? null)
 
@@ -80,7 +81,7 @@ export function Play({ game }: { game: Game }) {
       <div className="flex-1 flex flex-col items-center justify-center text-center w-full">
         <TeamPill team={state.activeTeam} />
         <p className="text-2xl font-bold mt-4">
-          {t('play.givingClues', { name: activePlayer?.name ?? '' })}
+          {t('play.givingClues', { name: activePlayer ? translateAnimalName(activePlayer.name, lang) : '' })}
         </p>
         <p className="text-indigo-400 mt-1">{roundTitle}</p>
         <div className="my-8">{Timer}</div>

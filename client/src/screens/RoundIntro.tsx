@@ -1,10 +1,11 @@
 import type { Game } from '../useGame'
 import { Avatar, Button, Screen, TeamPill } from '../components/ui'
 import { Scoreboard } from '../components/Scoreboard'
-import { useT } from '../i18n'
+import { useI18n } from '../i18n'
+import { translateAnimalName } from '../animals'
 
 export function RoundIntro({ game }: { game: Game }) {
-  const t = useT()
+  const { t, lang } = useI18n()
   const { state } = game
   if (!state) return null
   const activePlayer = state.players.find((p) => p.id === state.activePlayerId)
@@ -23,8 +24,8 @@ export function RoundIntro({ game }: { game: Game }) {
           <p className="text-slate-400 text-sm">{t('round.next')}</p>
           {activePlayer && (
             <div className="flex items-center justify-center gap-2 mt-2">
-              <Avatar name={activePlayer.name} color={activePlayer.color} />
-              <span className="text-xl font-bold">{activePlayer.name}</span>
+              <Avatar name={translateAnimalName(activePlayer.name, lang)} color={activePlayer.color} />
+              <span className="text-xl font-bold">{translateAnimalName(activePlayer.name, lang)}</span>
               <TeamPill team={state.activeTeam} />
             </div>
           )}
@@ -39,7 +40,7 @@ export function RoundIntro({ game }: { game: Game }) {
           <Button onClick={game.beginTurn}>{t('round.start')}</Button>
         ) : (
           <p className="text-center text-slate-400 pb-2">
-            {t('round.waitingFor', { name: activePlayer?.name ?? '' })}
+            {t('round.waitingFor', { name: activePlayer ? translateAnimalName(activePlayer.name, lang) : '' })}
           </p>
         )}
       </div>

@@ -45,7 +45,7 @@ describe('lobby & joining', () => {
 
     const s = await guest.waitFor((s) => s.players.length === 2)
     const [a, b] = s.players
-    assert.match(a.name, /^\p{Lu}\p{L}+ \p{Lu}\p{L}+$/u) // "Adjectiv Animal" (supports diacritics)
+    assert.match(a.name, /^[A-Z][a-z]+ [A-Z][a-z]+$/)
     assert.notEqual(a.name, b.name)
     assert.notEqual(a.color, b.color)
   })
