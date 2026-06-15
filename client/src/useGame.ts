@@ -82,7 +82,7 @@ export function useGame(): Game {
     (name?: string) => {
       socket.emit('create_room', { playerId, name }, (res) => {
         if (!res.ok) setError(res.error)
-        else trackEvent('room_created')
+        else trackEvent('room_created', { roomId: res.roomId, playerName: name })
       })
     },
     [playerId]
@@ -90,9 +90,10 @@ export function useGame(): Game {
 
   const joinRoom = useCallback(
     (roomId: string, name?: string) => {
-      socket.emit('join_room', { roomId: roomId.toUpperCase(), playerId, name }, (res) => {
+      const upper = roomId.toUpperCase()
+      socket.emit('join_room', { roomId: upper, playerId, name }, (res) => {
         if (!res.ok) setError(res.error)
-        else trackEvent('room_joined')
+        else trackEvent('room_joined', { roomId: upper, playerName: name })
       })
     },
     [playerId]
