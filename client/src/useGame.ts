@@ -22,6 +22,7 @@ export interface Game {
   chooseTeam: (teamId: TeamId) => void
   beginSubmit: () => void
   submitNames: (names: string[]) => Promise<{ ok: boolean; error?: string }>
+  setNamesCount: (count: number) => void
   startGame: () => void
   beginTurn: () => void
   guessCorrect: () => void
@@ -130,6 +131,7 @@ export function useGame(): Game {
     chooseTeam: (teamId) => socket.emit('choose_team', { teamId }),
     beginSubmit: () => socket.emit('begin_submit'),
     submitNames,
+    setNamesCount: (count) => socket.emit('set_names_count', { count }),
     startGame: () => socket.emit('start_game'),
     beginTurn: () => socket.emit('begin_turn'),
     guessCorrect: () => socket.emit('guess_correct'),

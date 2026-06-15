@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import type { Game } from '../useGame'
-import { NAMES_PER_PLAYER } from '@shared/types'
 import { Button, Screen } from '../components/ui'
 import { useT } from '../i18n'
 
@@ -8,7 +7,8 @@ export function Submit({ game }: { game: Game }) {
   const t = useT()
   const { state } = game
   const me = game.me()
-  const [names, setNames] = useState<string[]>(Array(NAMES_PER_PLAYER).fill(''))
+  const n = state?.namesPerPlayer ?? 5
+  const [names, setNames] = useState<string[]>(() => Array(n).fill(''))
   const [done, setDone] = useState(!!me?.hasSubmitted)
   if (!state) return null
 
@@ -50,7 +50,7 @@ export function Submit({ game }: { game: Game }) {
   return (
     <Screen>
       <div className="w-full text-center mb-4">
-        <h2 className="text-2xl font-bold">{t('submit.title', { n: NAMES_PER_PLAYER })}</h2>
+        <h2 className="text-2xl font-bold">{t('submit.title', { n: n })}</h2>
         <p className="text-slate-400 text-sm mt-1">{t('submit.subtitle')}</p>
       </div>
       <div className="w-full space-y-2">
@@ -72,10 +72,10 @@ export function Submit({ game }: { game: Game }) {
       </div>
       <div className="flex-1" />
       <div className="w-full mt-6">
-        <Button disabled={filled !== NAMES_PER_PLAYER} onClick={submit}>
-          {filled === NAMES_PER_PLAYER
+        <Button disabled={filled !== n} onClick={submit}>
+          {filled === n
             ? t('submit.submit')
-            : t('submit.filled', { filled, n: NAMES_PER_PLAYER })}
+            : t('submit.filled', { filled, n: n })}
         </Button>
       </div>
     </Screen>

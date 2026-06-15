@@ -8,7 +8,8 @@ import {
   ClientToServer,
   ServerToClient,
   TeamId,
-  NAMES_PER_PLAYER,
+  MIN_NAMES,
+  MAX_NAMES,
   TURN_SECONDS,
   MIN_PLAYERS,
 } from '../../shared/types'
@@ -207,6 +208,13 @@ export function createGameServer(port = 0): Promise<GameServer> {
       }
     })
 
+    socket.on('set_names_count', ({ count }) => {
+      const r = room()
+      if (!r || !isHost() || r.phase !== 'lobby') return
+      r.namesPerPlayer = Math.max(MIN_NAMES, Math.min(MAX_NAMES, Math.round(count)))
+      emitState(r)
+    })
+
     socket.on('choose_team', ({ teamId }) => {
       const p = self()
       const r = room()
@@ -236,8 +244,8 @@ export function createGameServer(port = 0): Promise<GameServer> {
       const r = room()
       if (!p || !r || r.phase !== 'submit') return cb({ ok: false, error: 'Not accepting names' })
       const clean = names.map((n) => n.trim()).filter(Boolean)
-      if (clean.length !== NAMES_PER_PLAYER) {
-        return cb({ ok: false, error: `Enter exactly ${NAMES_PER_PLAYER} names.` })
+      if (clean.length !== r.namesPerPlayer) {
+        return cb({ ok: false, error: `Enter exactly ${r.namesPerPlayer} names.` })
       }
       p.names = clean
       cb({ ok: true })
@@ -248,7 +256,7 @@ export function createGameServer(port = 0): Promise<GameServer> {
       const r = room()
       if (!r || !isHost() || r.phase !== 'submit') return
       const teamed = [...r.players.values()].filter((p) => p.teamId)
-      if (teamed.some((p) => p.names.length !== NAMES_PER_PLAYER)) {
+      if (teamed.some((p) => p.names.length !== r.namesPerPlayer)) {
         socket.emit('error_msg', 'Everyone on a team must submit their names first.')
         return
       }

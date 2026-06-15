@@ -3,6 +3,7 @@ import {
   PublicPlayer,
   TeamId,
   Phase,
+  NAMES_PER_PLAYER,
 } from '../../shared/types'
 import { generateAnimalName, pickColor } from './animals'
 
@@ -26,6 +27,7 @@ export interface Room {
   activeTeam: TeamId
   turnIndex: Record<TeamId, number> // rotation pointer per team
   activePlayerId: string | null
+  namesPerPlayer: number
   allNames: string[] // master list, used to refill the bowl each round
   bowl: string[] // names remaining this round
   currentName: string | null // only revealed privately to the active player
@@ -66,6 +68,7 @@ export function createRoom(hostId: string): Room {
     activeTeam: 'A',
     turnIndex: { A: 0, B: 0 },
     activePlayerId: null,
+    namesPerPlayer: NAMES_PER_PLAYER,
     allNames: [],
     bowl: [],
     currentName: null,
@@ -137,7 +140,7 @@ export function hydrateRoom(snap: RoomSnapshot): Room {
     // Sockets are gone after a restart; players reconnect to re-attach.
     players.set(p.id, { ...p, connected: false, socketId: null })
   }
-  return { ...snap, players, timer: null }
+  return { ...snap, players, timer: null, namesPerPlayer: snap.namesPerPlayer ?? NAMES_PER_PLAYER }
 }
 
 export function restoreRooms(list: Room[]): void {
@@ -168,6 +171,7 @@ export function toPublic(room: Room): PublicState {
     activePlayerId: room.activePlayerId,
     bowlCount: room.bowl.length,
     totalNames: room.allNames.length,
+    namesPerPlayer: room.namesPerPlayer,
     turnEndsAt: room.turnEndsAt,
     lastGuessed: room.lastGuessed,
     winner: room.winner,

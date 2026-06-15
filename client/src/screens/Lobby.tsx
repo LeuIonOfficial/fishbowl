@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { Game } from '../useGame'
 import type { TeamId } from '@shared/types'
-import { MIN_PLAYERS } from '@shared/types'
+import { MIN_PLAYERS, MIN_NAMES, MAX_NAMES } from '@shared/types'
 import { Avatar, Button, Screen } from '../components/ui'
 import { useI18n } from '../i18n'
 import { translateAnimalName } from '../animals'
@@ -103,6 +103,22 @@ export function Lobby({ game }: { game: Game }) {
       <div className="flex-1" />
 
       <div className="w-full mt-6 space-y-2">
+        {game.isHost && (
+          <div className="flex items-center gap-3 rounded-2xl bg-slate-800/40 px-4 py-3">
+            <span className="flex-1 text-sm text-slate-300">{t('lobby.namesPerPlayer')}</span>
+            <button
+              className="w-8 h-8 rounded-full bg-slate-700 text-lg font-bold disabled:opacity-30"
+              disabled={state.namesPerPlayer <= MIN_NAMES}
+              onClick={() => game.setNamesCount(state.namesPerPlayer - 1)}
+            >−</button>
+            <span className="w-5 text-center font-bold">{state.namesPerPlayer}</span>
+            <button
+              className="w-8 h-8 rounded-full bg-slate-700 text-lg font-bold disabled:opacity-30"
+              disabled={state.namesPerPlayer >= MAX_NAMES}
+              onClick={() => game.setNamesCount(state.namesPerPlayer + 1)}
+            >+</button>
+          </div>
+        )}
         {game.isHost ? (
           <>
             <Button disabled={!canStart} onClick={game.beginSubmit}>

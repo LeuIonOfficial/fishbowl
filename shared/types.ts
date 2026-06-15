@@ -9,7 +9,9 @@ export type Phase =
 
 export type TeamId = 'A' | 'B'
 
-export const NAMES_PER_PLAYER = 5
+export const NAMES_PER_PLAYER = 5 // default
+export const MIN_NAMES = 2
+export const MAX_NAMES = 10
 export const TURN_SECONDS = 60
 export const MIN_PLAYERS = 4
 
@@ -41,6 +43,7 @@ export interface PublicState {
   activePlayerId: string | null
   bowlCount: number
   totalNames: number
+  namesPerPlayer: number
   turnEndsAt: number | null // server timestamp (ms); clients count down locally
   lastGuessed: string | null
   winner: TeamId | 'tie' | null
@@ -56,6 +59,7 @@ export interface ClientToServer {
     p: { roomId: string; playerId: string; name?: string },
     cb: (res: { ok: true; roomId: string } | { ok: false; error: string }) => void
   ) => void
+  set_names_count: (p: { count: number }) => void
   rename: (p: { name: string }) => void
   choose_team: (p: { teamId: TeamId }) => void
   begin_submit: () => void
