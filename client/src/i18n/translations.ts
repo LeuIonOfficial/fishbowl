@@ -9,7 +9,17 @@ export const LANG_LABELS: Record<Lang, string> = { ro: 'RO', ru: 'RU', en: 'EN' 
 type Dict = Record<string, string>
 
 const en: Dict = {
-  'home.tagline': 'The party guessing game. Grab some friends.',
+  'home.tagline': 'The party game with famous names. Gather your crew.',
+  'home.howto': 'How to play',
+  'home.step1': 'Everyone secretly adds 5 famous names to the shared pool.',
+  'home.step2': 'Teams take turns — 60 seconds to get teammates to guess names.',
+  'home.step3': 'Same names, 3 rounds. Each round gets harder.',
+  'home.r1': 'Describe',
+  'home.r1.desc': 'anything but the name',
+  'home.r2': '2 words',
+  'home.r2.desc': 'two words max',
+  'home.r3': 'Act it out',
+  'home.r3.desc': 'no words at all',
   'home.create': 'Create a room',
   'home.or': 'or join',
   'home.code': 'ROOM CODE',
@@ -65,7 +75,17 @@ const en: Dict = {
 }
 
 const ro: Dict = {
-  'home.tagline': 'Jocul de ghicit pentru petreceri. Adună-ți prietenii.',
+  'home.tagline': 'Jocul de petrecere cu vedete. Adună-ți gașca.',
+  'home.howto': 'Cum joci',
+  'home.step1': 'Fiecare adaugă în secret 5 personalități celebre în bol.',
+  'home.step2': 'Echipele se alternează — 60 de secunde să ghicești cât mai multe.',
+  'home.step3': 'Aceleași nume, 3 runde. Fiecare rundă e mai grea.',
+  'home.r1': 'Descrie',
+  'home.r1.desc': 'orice, fără numele',
+  'home.r2': '2 cuvinte',
+  'home.r2.desc': 'maxim două cuvinte',
+  'home.r3': 'Mimează',
+  'home.r3.desc': 'fără cuvinte',
   'home.create': 'Creează o cameră',
   'home.or': 'sau intră',
   'home.code': 'COD CAMERĂ',
@@ -121,7 +141,17 @@ const ro: Dict = {
 }
 
 const ru: Dict = {
-  'home.tagline': 'Весёлая игра в угадайку. Зовите друзей.',
+  'home.tagline': 'Вечеринка со знаменитостями. Зовите всех.',
+  'home.howto': 'Как играть',
+  'home.step1': 'Каждый тайно добавляет 5 знаменитых имён в общий котёл.',
+  'home.step2': 'Команды по очереди — 60 секунд угадать как можно больше.',
+  'home.step3': 'Те же имена, 3 раунда. Каждый сложнее предыдущего.',
+  'home.r1': 'Опиши',
+  'home.r1.desc': 'всё кроме имени',
+  'home.r2': '2 слова',
+  'home.r2.desc': 'максимум два слова',
+  'home.r3': 'Покажи',
+  'home.r3.desc': 'без слов',
   'home.create': 'Создать комнату',
   'home.or': 'или войти',
   'home.code': 'КОД КОМНАТЫ',

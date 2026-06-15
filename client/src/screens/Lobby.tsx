@@ -23,7 +23,7 @@ export function Lobby({ game }: { game: Game }) {
 
   const share = () => {
     const url = `${location.origin}${location.pathname}?room=${state.roomId}`
-    if (navigator.share) navigator.share({ title: 'Fishbowl', url }).catch(() => {})
+    if (navigator.share) navigator.share({ title: 'Explica Normal', url }).catch(() => {})
     else navigator.clipboard?.writeText(url)
   }
 
