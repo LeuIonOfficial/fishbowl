@@ -1,0 +1,45 @@
+name: Deploy to VPS
+
+# On every push to main, sync the code to the VPS and rebuild the container.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Never run two deploys at once.
+concurrency:
+  group: deploy-vps
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "${{ secrets.VPS_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Sync code to the VPS
+        run: |
+          rsync -az --delete \
+            -e "ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes" \
+            --exclude '.git' --exclude 'node_modules' --exclude 'dist' \
+            --exclude 'test-results' --exclude 'playwright-report' \
+            --exclude '*.tsbuildinfo' \
+            ./ "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/root/fishbowl/"
+
+      - name: Rebuild and restart
+        run: |
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes \
+            "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
+            'cd /root/fishbowl && docker compose up -d --build && docker image prune -f'
+
+      - name: Smoke check
+        run: |
+          sleep 5
+          curl -fsS --max-time 15 https://game.ionleu.com/health && echo " — deploy healthy"
