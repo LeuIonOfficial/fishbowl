@@ -3,11 +3,8 @@ import type { PublicState, TeamId } from '@shared/types'
 import { socket, getPlayerId } from './game'
 import { trackEvent } from './analytics'
 
-const ROOM_KEY = 'fishbowl.roomId'
-
 function storedRoom(): string | null {
-  const fromUrl = new URLSearchParams(location.search).get('room')
-  return (fromUrl || localStorage.getItem(ROOM_KEY))?.toUpperCase() || null
+  return new URLSearchParams(location.search).get('room')?.toUpperCase() || null
 }
 
 export interface Game {
@@ -41,7 +38,7 @@ export function useGame(): Game {
   useEffect(() => {
     const onState = (s: PublicState) => {
       roomRef.current = s.roomId
-      localStorage.setItem(ROOM_KEY, s.roomId)
+      history.replaceState(null, '', '?room=' + s.roomId)
       setState(s)
     }
     const onName = (n: string | null) => setCurrentName(n)
@@ -60,7 +57,7 @@ export function useGame(): Game {
       if (room) {
         socket.emit('join_room', { roomId: room, playerId }, (res) => {
           if (!res.ok) {
-            localStorage.removeItem(ROOM_KEY)
+            history.replaceState(null, '', location.pathname)
             roomRef.current = null
             setState(null)
           }
@@ -100,7 +97,6 @@ export function useGame(): Game {
   )
 
   const leaveRoom = useCallback(() => {
-    localStorage.removeItem(ROOM_KEY)
     roomRef.current = null
     setState(null)
     setCurrentName(null)
