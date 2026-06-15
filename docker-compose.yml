@@ -1,0 +1,35 @@
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    # Append-only file so live game state survives a Redis restart too.
+    command: ['redis-server', '--appendonly', 'yes']
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  app:
+    build: .
+    restart: unless-stopped
+    # Publish on port 80 so players just hit http://<vps-ip>
+    ports:
+      - '80:3001'
+    environment:
+      - PORT=3001
+      - REDIS_URL=redis://redis:6379
+      - CLIENT_DIST=/app/client/dist
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://localhost:3001/health']
+      interval: 15s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  redis-data:

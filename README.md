@@ -43,6 +43,39 @@ shares the 4-letter code (or the join link), everyone else joins, picks a team, 
    - The timer is sent once as a timestamp; each phone counts down locally (no per-second traffic).
 4. **Game over** — highest score after 3 rounds wins. Host can play again.
 
+## Deploy to a VPS (Docker)
+
+The whole thing runs as a Docker Compose stack: the Node server serves both the API
+(socket) **and** the built client on one origin, with Redis for live-game resilience.
+
+On the VPS (needs Docker + the compose plugin):
+
+```bash
+git clone <your-repo> fishbowl && cd fishbowl
+./deploy.sh          # builds the image and starts app + redis
+```
+
+The app is published on **port 80**, so players just open `http://<vps-ip>/`.
+One person taps *Create a room*, shares the 4-letter code, everyone joins from their phones.
+
+```bash
+docker compose logs -f app     # tail logs
+docker compose ps              # status
+docker compose down            # stop
+./deploy.sh                    # pull + rebuild + restart (to update)
+```
+
+**Resilience:** every state change is written through to Redis (`REDIS_URL`). If the
+`app` container restarts mid-game, it rehydrates in-progress rooms and re-arms their turn
+timers; phones auto-rejoin their seats. Redis uses an append-only volume so its own restart
+is safe too. Abandoned rooms expire after 6h.
+
+> HTTP-only for now (IP access). Phone niceties that require a secure context
+> (screen Wake-Lock, clipboard share) need HTTPS — add a domain + Caddy/certbot later.
+
+> Scaling to multiple `app` instances would additionally need the Socket.IO Redis
+> adapter; a single container is plenty for a party game.
+
 ## Testing
 
 ```bash

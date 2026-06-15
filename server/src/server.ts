@@ -1,4 +1,5 @@
 import http from 'http'
+import path from 'path'
 import express from 'express'
 import cors from 'cors'
 import { AddressInfo } from 'net'
@@ -16,10 +17,12 @@ import {
   addPlayer,
   createRoom,
   getRoom,
+  restoreRooms,
   shuffle,
   teamMembers,
   toPublic,
 } from './game'
+import { persistRoom, loadRooms, persistenceEnabled } from './store'
 
 // Turn length, overridable at runtime (tests set TURN_MS low to exercise timeouts).
 function turnMs(): number {
@@ -39,6 +42,14 @@ export function createGameServer(port = 0): Promise<GameServer> {
   app.use(cors())
   app.get('/health', (_req, res) => res.json({ ok: true }))
 
+  // In production the same server serves the built client (single origin, so the
+  // socket connection is same-origin too). CLIENT_DIST is unset in dev/tests.
+  const clientDist = process.env.CLIENT_DIST
+  if (clientDist) {
+    app.use(express.static(clientDist))
+    app.get('*', (_req, res) => res.sendFile(path.join(clientDist, 'index.html')))
+  }
+
   const httpServer = http.createServer(app)
   const io = new Server<ClientToServer, ServerToClient>(httpServer, {
     cors: { origin: '*' },
@@ -55,6 +66,9 @@ export function createGameServer(port = 0): Promise<GameServer> {
         io.to(active.socketId).emit('current_name', room.currentName)
       }
     }
+    // Write-through to Redis (no-op without REDIS_URL). Fire-and-forget so the
+    // broadcast isn't blocked on I/O.
+    void persistRoom(room)
   }
 
   // ---- Turn / round lifecycle ----
@@ -303,19 +317,37 @@ export function createGameServer(port = 0): Promise<GameServer> {
     })
   })
 
-  return new Promise((resolve) => {
-    httpServer.listen(port, () => {
-      const actualPort = (httpServer.address() as AddressInfo).port
-      resolve({
-        io,
-        httpServer,
-        port: actualPort,
-        close: () =>
-          new Promise<void>((res) => {
-            io.close()
-            httpServer.close(() => res())
-          }),
+  // Restore any in-progress games from Redis and re-arm their turn timers.
+  async function rehydrate() {
+    if (!persistenceEnabled) return
+    const restored = await loadRooms()
+    restoreRooms(restored)
+    const now = Date.now()
+    for (const r of restored) {
+      if (r.phase === 'playing' && r.turnEndsAt) {
+        if (r.turnEndsAt <= now) endTurn(r) // turn expired during downtime
+        else r.timer = setTimeout(() => endTurn(r), r.turnEndsAt - now)
+      }
+    }
+    if (restored.length) console.log(`[restore] recovered ${restored.length} room(s) from Redis`)
+  }
+
+  return rehydrate().then(
+    () =>
+      new Promise<GameServer>((resolve) => {
+        httpServer.listen(port, () => {
+          const actualPort = (httpServer.address() as AddressInfo).port
+          resolve({
+            io,
+            httpServer,
+            port: actualPort,
+            close: () =>
+              new Promise<void>((res) => {
+                io.close()
+                httpServer.close(() => res())
+              }),
+          })
+        })
       })
-    })
-  })
+  )
 }

@@ -121,6 +121,33 @@ export function shuffle<T>(arr: T[]): T[] {
   return a
 }
 
+// ---- Persistence (de)serialization ----
+// A snapshot is a Room without the live timer handle and with players as a
+// plain array (Maps don't survive JSON). Used to store/restore from Redis.
+export type RoomSnapshot = Omit<Room, 'players' | 'timer'> & { players: Player[] }
+
+export function serializeRoom(room: Room): RoomSnapshot {
+  const { timer: _timer, players, ...rest } = room
+  return { ...rest, players: [...players.values()] }
+}
+
+export function hydrateRoom(snap: RoomSnapshot): Room {
+  const players = new Map<string, Player>()
+  for (const p of snap.players) {
+    // Sockets are gone after a restart; players reconnect to re-attach.
+    players.set(p.id, { ...p, connected: false, socketId: null })
+  }
+  return { ...snap, players, timer: null }
+}
+
+export function restoreRooms(list: Room[]): void {
+  for (const r of list) rooms.set(r.id, r)
+}
+
+export function allRooms(): Room[] {
+  return [...rooms.values()]
+}
+
 export function toPublic(room: Room): PublicState {
   const players: PublicPlayer[] = [...room.players.values()].map((p) => ({
     id: p.id,

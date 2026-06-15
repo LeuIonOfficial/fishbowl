@@ -1,0 +1,11 @@
+**/node_modules
+**/dist
+**/test-results
+**/playwright-report
+**/.cache
+**/*.log
+.git
+.github
+e2e
+*.tsbuildinfo
+.DS_Store
