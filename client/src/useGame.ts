@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import type { PublicState, TeamId } from '@shared/types'
 import { socket, getPlayerId } from './game'
 import { trackEvent } from './analytics'
+import { resolveLang } from './i18n'
 
 function storedRoom(): string | null {
   return new URLSearchParams(location.search).get('room')?.toUpperCase() || null
@@ -77,7 +78,8 @@ export function useGame(): Game {
 
   const createRoom = useCallback(
     (name?: string) => {
-      socket.emit('create_room', { playerId, name }, (res) => {
+      const lang = resolveLang()
+      socket.emit('create_room', { playerId, name, lang }, (res) => {
         if (!res.ok) setError(res.error)
         else trackEvent('room_created', { roomId: res.roomId, playerName: name })
       })
@@ -88,7 +90,8 @@ export function useGame(): Game {
   const joinRoom = useCallback(
     (roomId: string, name?: string) => {
       const upper = roomId.toUpperCase()
-      socket.emit('join_room', { roomId: upper, playerId, name }, (res) => {
+      const lang = resolveLang()
+      socket.emit('join_room', { roomId: upper, playerId, name, lang }, (res) => {
         if (!res.ok) setError(res.error)
         else trackEvent('room_joined', { roomId: upper, playerName: name })
       })

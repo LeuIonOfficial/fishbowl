@@ -172,16 +172,16 @@ export function createGameServer(port = 0): Promise<GameServer> {
       socket.join(r.id)
     }
 
-    socket.on('create_room', ({ playerId, name }, cb) => {
+    socket.on('create_room', ({ playerId, name, lang }, cb) => {
       const r = createRoom(playerId)
-      const p = addPlayer(r, playerId, name)
+      const p = addPlayer(r, playerId, name, lang)
       p.socketId = socket.id
       attach(r, playerId)
       cb({ ok: true, roomId: r.id })
       emitState(r)
     })
 
-    socket.on('join_room', ({ roomId, playerId, name }, cb) => {
+    socket.on('join_room', ({ roomId, playerId, name, lang }, cb) => {
       const r = getRoom(roomId.toUpperCase())
       if (!r) return cb({ ok: false, error: 'Room not found' })
       const existing = r.players.get(playerId)
@@ -189,7 +189,7 @@ export function createGameServer(port = 0): Promise<GameServer> {
         existing.connected = true
         existing.socketId = socket.id
       } else {
-        const p = addPlayer(r, playerId, name)
+        const p = addPlayer(r, playerId, name, lang)
         p.socketId = socket.id
       }
       attach(r, playerId)
